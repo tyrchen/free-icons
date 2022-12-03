@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [unreleased]
 
+### Bug Fixes
+
+- Fix github action ([97000e9](97000e95b98d38e2d75310f7ec06ded8f3d54b0f) - 2022-12-03 by Tyr Chen)
+
 ### Features
 
 - Add font-awesome ([3336905](33369050e62b090800b4341bbe48a033f091b856) - 2022-12-02 by Tyr Chen)

@@ -12,6 +12,14 @@ Use free svg icons in your html projects
 readme = "README.md"
 categories = ["web-programming"]
 keywords = ["icons", "svg"]
+include = [
+    "Cargo.toml",
+    "build.rs",
+    "src/lib.rs",
+    "src/gen/*.rs",
+    "templates/*.j2",
+]
+
 
 [features]
 default = ["bootstrap", "feather", "font-awesome", "heroicons", "ionicons", "octicons"]
