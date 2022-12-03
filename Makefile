@@ -1,5 +1,5 @@
 build:
-	@cargo build
+	@BUILD_ICONS=1 cargo build
 
 test:
 	@cargo nextest run --all-features
