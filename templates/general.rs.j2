@@ -2,7 +2,7 @@
 use phf::phf_map;
 
 {% if fill %}
-pub static FILL: phf::Map<&'static str, &'static str> = phf_map! {
+pub static FILL: phf::Map<&'static String, &'static String> = phf_map! {
     {%- for name, content in fill %}
     "{{ name }}" => r###"{{ content }}"###,
     {%- endfor %}
@@ -11,7 +11,7 @@ pub static FILL: phf::Map<&'static str, &'static str> = phf_map! {
 
 {% if normal %}
 
-pub static NORMAL: phf::Map<&'static str, &'static str> = phf_map! {
+pub static NORMAL: phf::Map<&'static String, &'static String> = phf_map! {
     {%- for name, content in normal %}
     "{{ name }}" => r###"{{ content }}"###,
     {%- endfor %}
@@ -20,7 +20,7 @@ pub static NORMAL: phf::Map<&'static str, &'static str> = phf_map! {
 
 {% if outline %}
 
-pub static OUTLINE: phf::Map<&'static str, &'static str> = phf_map! {
+pub static OUTLINE: phf::Map<&'static String, &'static String> = phf_map! {
     {%- for name, content in outline %}
     "{{ name }}" => r###"{{ content }}"###,
     {%- endfor %}
@@ -29,7 +29,7 @@ pub static OUTLINE: phf::Map<&'static str, &'static str> = phf_map! {
 
 {% if sharp %}
 
-pub static SHARP: phf::Map<&'static str, &'static str> = phf_map! {
+pub static SHARP: phf::Map<&'static String, &'static String> = phf_map! {
     {%- for name, content in sharp %}
     "{{ name }}" => r###"{{ content }}"###,
     {%- endfor %}
@@ -38,7 +38,7 @@ pub static SHARP: phf::Map<&'static str, &'static str> = phf_map! {
 
 {% if solid %}
 
-pub static SOLID: phf::Map<&'static str, &'static str> = phf_map! {
+pub static SOLID: phf::Map<&'static String, &'static String> = phf_map! {
     {%- for name, content in solid %}
     "{{ name }}" => r###"{{ content }}"###,
     {%- endfor %}
@@ -47,7 +47,7 @@ pub static SOLID: phf::Map<&'static str, &'static str> = phf_map! {
 
 {% if brands %}
 
-pub static BRANDS: phf::Map<&'static str, &'static str> = phf_map! {
+pub static BRANDS: phf::Map<&'static String, &'static String> = phf_map! {
     {%- for name, content in brands %}
     "{{ name }}" => r###"{{ content }}"###,
     {%- endfor %}
@@ -56,7 +56,7 @@ pub static BRANDS: phf::Map<&'static str, &'static str> = phf_map! {
 
 {% if regular %}
 
-pub static REGULAR: phf::Map<&'static str, &'static str> = phf_map! {
+pub static REGULAR: phf::Map<&'static String, &'static String> = phf_map! {
     {%- for name, content in regular %}
     "{{ name }}" => r###"{{ content }}"###,
     {%- endfor %}

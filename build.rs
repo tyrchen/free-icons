@@ -1,10 +1,13 @@
 use anyhow::Result;
 use convert_case::{Case, Casing};
+use flate2::write::GzEncoder;
 use minify_html::{minify, Cfg};
+use serde_json::json;
 use std::{
     collections::HashMap,
     env::current_dir,
     fs::{self, File},
+    io::Write,
     path::{Path, PathBuf},
     process::Command,
 };
@@ -37,9 +40,17 @@ fn main() -> Result<()> {
     for (name, inner_path) in icons.iter() {
         let data = get_icon_data(&get_path(name, inner_path), &cfg)?;
 
-        let context = Context::from_serialize(data)?;
-        let writer = File::create(gen_dir.join(format!("{}.rs", name.to_case(Case::Snake))))?;
-        tera.render_to("general.rs", &context, writer)?;
+        let name = name.to_case(Case::Snake);
+        let bin = encap(&data)?;
+        fs::write(gen_dir.join(format!("{}.bin", name)), bin)?;
+
+        let mut context = json!({ "name": name });
+        for key in data.keys() {
+            context[key] = json!(true);
+        }
+        let context = Context::from_serialize(context)?;
+        let writer = File::create(gen_dir.join(format!("{}.rs", name)))?;
+        tera.render_to("lazy.rs", &context, writer)?;
     }
 
     let icons = [
@@ -49,10 +60,18 @@ fn main() -> Result<()> {
 
     for (name, inner_path, categories) in icons.iter() {
         let data = get_icon_data_by_category(&get_path(name, inner_path), categories, &cfg)?;
+        let bin = encap(&data)?;
 
-        let context = Context::from_serialize(data)?;
-        let writer = File::create(gen_dir.join(format!("{}.rs", name.to_case(Case::Snake))))?;
-        tera.render_to("general.rs", &context, writer)?;
+        let name = name.to_case(Case::Snake);
+        fs::write(gen_dir.join(format!("{}.bin", name)), bin)?;
+
+        let mut context = json!({ "name": name });
+        for key in data.keys() {
+            context[key] = json!(true);
+        }
+        let context = Context::from_serialize(context)?;
+        let writer = File::create(gen_dir.join(format!("{}.rs", name)))?;
+        tera.render_to("lazy.rs", &context, writer)?;
     }
 
     Command::new("cargo").arg("fmt").output()?;
@@ -141,7 +160,7 @@ fn get_icon_data(path: &Path, cfg: &Cfg) -> Result<NestedMap> {
 
 fn get_tera() -> Result<Tera> {
     let mut tera = Tera::default();
-    tera.add_raw_template("general.rs", include_str!("templates/general.rs.j2"))?;
+    tera.add_raw_template("lazy.rs", include_str!("templates/lazy.rs.j2"))?;
     tera.register_filter(
         "pascal",
         |v: &tera::Value, _args: &HashMap<String, tera::Value>| match v.as_str() {
@@ -151,4 +170,12 @@ fn get_tera() -> Result<Tera> {
     );
 
     Ok(tera)
+}
+
+fn encap(data: &NestedMap) -> Result<Vec<u8>> {
+    let bin = bincode::serialize(data)?;
+    let buf = Vec::new();
+    let mut encoder = GzEncoder::new(buf, flate2::Compression::default());
+    encoder.write_all(&bin)?;
+    Ok(encoder.finish()?)
 }
