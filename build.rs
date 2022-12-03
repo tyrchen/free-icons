@@ -55,7 +55,7 @@ fn main() -> Result<()> {
 
     let icons = [
         ("font-awesome", "svgs", vec!["brands", "regular", "solid"]),
-        ("heroicons", "src/24", vec!["outline", "solid"]),
+        ("heroicons", "optimized/24", vec!["outline", "solid"]),
     ];
 
     for (name, inner_path, categories) in icons.iter() {

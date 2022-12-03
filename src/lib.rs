@@ -1,14 +1,17 @@
 use flate2::bufread::GzDecoder;
 use std::{
+    borrow::Cow,
     collections::HashMap,
     io::{Cursor, Read},
 };
 
 mod gen;
 
+const MAX_ATTRS: usize = 16;
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
-pub struct IconAttrs {
-    data: Vec<(String, String)>,
+pub struct IconAttrs<'a> {
+    data: [(&'a str, Cow<'a, str>); MAX_ATTRS],
+    pos: u8,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -107,7 +110,7 @@ pub fn get(icon_type: IconType, name: &str) -> Option<&'static String> {
 
 #[cfg(feature = "bootstrap")]
 #[inline(always)]
-pub fn bootstrap(name: &str, filled: bool, attrs: &IconAttrs) -> Option<String> {
+pub fn bootstrap(name: &str, filled: bool, attrs: IconAttrs) -> Option<String> {
     let svg = if filled {
         gen::bootstrap::FILL.get(name)
     } else {
@@ -118,14 +121,14 @@ pub fn bootstrap(name: &str, filled: bool, attrs: &IconAttrs) -> Option<String> 
 
 #[cfg(feature = "feather")]
 #[inline(always)]
-pub fn feather(name: &str, attrs: &IconAttrs) -> Option<String> {
+pub fn feather(name: &str, attrs: IconAttrs) -> Option<String> {
     let svg = gen::feather::NORMAL.get(name);
     attrs.add_to_svg(svg)
 }
 
 #[cfg(feature = "font-awesome")]
 #[inline(always)]
-pub fn font_awesome(name: &str, category: FontAwesome, attrs: &IconAttrs) -> Option<String> {
+pub fn font_awesome(name: &str, category: FontAwesome, attrs: IconAttrs) -> Option<String> {
     let svg = match category {
         FontAwesome::Brands => gen::font_awesome::BRANDS.get(name),
         FontAwesome::Regular => gen::font_awesome::REGULAR.get(name),
@@ -136,7 +139,7 @@ pub fn font_awesome(name: &str, category: FontAwesome, attrs: &IconAttrs) -> Opt
 
 #[cfg(feature = "heroicons")]
 #[inline(always)]
-pub fn heroicons(name: &str, outline: bool, attrs: &IconAttrs) -> Option<String> {
+pub fn heroicons(name: &str, outline: bool, attrs: IconAttrs) -> Option<String> {
     let svg = if outline {
         gen::heroicons::OUTLINE.get(name)
     } else {
@@ -147,7 +150,7 @@ pub fn heroicons(name: &str, outline: bool, attrs: &IconAttrs) -> Option<String>
 
 #[cfg(feature = "ionicons")]
 #[inline(always)]
-pub fn ionicons(name: &str, category: Ionicons, attrs: &IconAttrs) -> Option<String> {
+pub fn ionicons(name: &str, category: Ionicons, attrs: IconAttrs) -> Option<String> {
     let svg = match category {
         Ionicons::Outline => gen::ionicons::OUTLINE.get(name),
         Ionicons::Sharp => gen::ionicons::SHARP.get(name),
@@ -158,7 +161,7 @@ pub fn ionicons(name: &str, category: Ionicons, attrs: &IconAttrs) -> Option<Str
 
 #[cfg(feature = "octicons")]
 #[inline(always)]
-pub fn octicons(name: &str, attrs: &IconAttrs) -> Option<String> {
+pub fn octicons(name: &str, attrs: IconAttrs) -> Option<String> {
     let svg = gen::octicons::NORMAL.get(name);
     attrs.add_to_svg(svg)
 }
@@ -171,46 +174,73 @@ pub(crate) fn decap(bytes: &[u8]) -> HashMap<String, HashMap<String, String>> {
     bincode::deserialize_from(reader).expect("should deserialize")
 }
 
-impl IconAttrs {
+impl<'a> IconAttrs<'a> {
     #[inline(always)]
-    pub fn class(self, class: impl Into<String>) -> Self {
+    pub fn class(self, class: &'a str) -> Self {
         self.with("class", class)
     }
 
     #[inline(always)]
-    pub fn fill(self, fill: impl Into<String>) -> Self {
+    pub fn fill(self, fill: &'a str) -> Self {
         self.with("fill", fill)
     }
 
     #[inline(always)]
-    pub fn stroke_color(self, stroke_color: impl Into<String>) -> Self {
+    pub fn stroke_color(self, stroke_color: &'a str) -> Self {
         self.with("stroke", stroke_color)
     }
 
     #[inline(always)]
-    pub fn stroke_width(self, stroke_width: impl Into<String>) -> Self {
+    pub fn stroke_width(self, stroke_width: &'a str) -> Self {
         self.with("stroke-width", stroke_width)
     }
 
     #[inline(always)]
-    pub fn with(self, attr: impl Into<String>, value: impl Into<String>) -> Self {
+    pub fn with(self, attr: &'a str, value: &'a str) -> Self {
         let mut data = self.data;
-        data.push((attr.into(), value.into()));
-        Self { data }
+        let mut pos = self.pos;
+        data[pos as usize] = (attr, value.into());
+        pos = (pos + 1) % MAX_ATTRS as u8;
+
+        Self { data, pos }
     }
     fn add_to_svg(&self, svg: Option<&String>) -> Option<String> {
         if let Some(svg) = svg {
             let mut svg = svg.to_owned();
             let mut attrs = String::new();
-            for (k, v) in self.data.iter() {
+            for i in 0..self.pos {
+                let (k, v) = &self.data[i as usize];
                 attrs.push_str(&format!(" {}=\"{}\"", k, v));
             }
 
-            svg.insert_str(4, &attrs);
+            if !attrs.is_empty() {
+                svg.insert_str(4, &attrs);
+            }
             Some(svg)
         } else {
             None
         }
+    }
+}
+
+#[cfg(feature = "json")]
+impl<'a> From<&'a serde_json::Value> for IconAttrs<'a> {
+    fn from(value: &'a serde_json::Value) -> Self {
+        let mut attrs = IconAttrs::default();
+        if let serde_json::Value::Object(map) = value {
+            for (k, v) in map {
+                let s = match v {
+                    serde_json::Value::String(s) => s.into(),
+                    serde_json::Value::Number(n) => n.to_string().into(),
+                    serde_json::Value::Bool(b) => b.to_string().into(),
+                    _ => continue,
+                };
+
+                attrs.data[attrs.pos as usize] = (k, s);
+                attrs.pos = (attrs.pos + 1) % MAX_ATTRS as u8;
+            }
+        }
+        attrs
     }
 }
 
@@ -303,7 +333,7 @@ mod tests {
         assert_eq!(
             get(IconType::Heroicons(Heroicons::Outline), "academic-cap"),
             Some(&expected(include_str!(
-                "../icon_resources/heroicons/src/24/outline/academic-cap.svg"
+                "../icon_resources/heroicons/optimized/24/outline/academic-cap.svg"
             )))
         );
     }
@@ -314,7 +344,7 @@ mod tests {
         assert_eq!(
             get(IconType::Heroicons(Heroicons::Solid), "academic-cap"),
             Some(&expected(include_str!(
-                "../icon_resources/heroicons/src/24/solid/academic-cap.svg"
+                "../icon_resources/heroicons/optimized/24/solid/academic-cap.svg"
             )))
         );
     }
@@ -367,7 +397,7 @@ mod tests {
     #[test]
     fn bootstrap_not_filled_should_work() {
         assert_eq!(
-            bootstrap("alarm", false, &IconAttrs::default()),
+            bootstrap("alarm", false, IconAttrs::default()),
             Some(expected(include_str!(
                 "../icon_resources/bootstrap/icons/alarm.svg"
             )))
@@ -378,7 +408,7 @@ mod tests {
     #[test]
     fn bootstrap_filled_should_work() {
         assert_eq!(
-            bootstrap("alarm", true, &IconAttrs::default()),
+            bootstrap("alarm", true, IconAttrs::default()),
             Some(expected(include_str!(
                 "../icon_resources/bootstrap/icons/alarm-fill.svg"
             )))
@@ -389,7 +419,7 @@ mod tests {
     #[test]
     fn feather_should_work() {
         assert_eq!(
-            feather("activity", &IconAttrs::default()),
+            feather("activity", IconAttrs::default()),
             Some(expected(include_str!(
                 "../icon_resources/feather/icons/activity.svg"
             )))
@@ -400,7 +430,7 @@ mod tests {
     #[test]
     fn font_awesome_brands_should_work() {
         assert_eq!(
-            font_awesome("500px", FontAwesome::Brands, &IconAttrs::default()),
+            font_awesome("500px", FontAwesome::Brands, IconAttrs::default()),
             Some(expected(include_str!(
                 "../icon_resources/font-awesome/svgs/brands/500px.svg"
             )))
@@ -411,7 +441,7 @@ mod tests {
     #[test]
     fn font_awesome_regular_should_work() {
         assert_eq!(
-            font_awesome("address-book", FontAwesome::Regular, &IconAttrs::default()),
+            font_awesome("address-book", FontAwesome::Regular, IconAttrs::default()),
             Some(expected(include_str!(
                 "../icon_resources/font-awesome/svgs/regular/address-book.svg"
             )))
@@ -422,7 +452,7 @@ mod tests {
     #[test]
     fn font_awesome_solid_should_work() {
         assert_eq!(
-            font_awesome("address-book", FontAwesome::Solid, &IconAttrs::default()),
+            font_awesome("address-book", FontAwesome::Solid, IconAttrs::default()),
             Some(expected(include_str!(
                 "../icon_resources/font-awesome/svgs/solid/address-book.svg"
             )))
@@ -433,9 +463,9 @@ mod tests {
     #[test]
     fn heroicons_outline_should_work() {
         assert_eq!(
-            heroicons("academic-cap", true, &IconAttrs::default()),
+            heroicons("academic-cap", true, IconAttrs::default()),
             Some(expected(include_str!(
-                "../icon_resources/heroicons/src/24/outline/academic-cap.svg"
+                "../icon_resources/heroicons/optimized/24/outline/academic-cap.svg"
             )))
         );
     }
@@ -444,9 +474,9 @@ mod tests {
     #[test]
     fn heroicons_solid_should_work() {
         assert_eq!(
-            heroicons("academic-cap", false, &IconAttrs::default()),
+            heroicons("academic-cap", false, IconAttrs::default()),
             Some(expected(include_str!(
-                "../icon_resources/heroicons/src/24/solid/academic-cap.svg"
+                "../icon_resources/heroicons/optimized/24/solid/academic-cap.svg"
             )))
         );
     }
@@ -455,7 +485,7 @@ mod tests {
     #[test]
     fn ionicons_outline_should_work() {
         assert_eq!(
-            ionicons("alarm", Ionicons::Outline, &IconAttrs::default()),
+            ionicons("alarm", Ionicons::Outline, IconAttrs::default()),
             Some(expected(include_str!(
                 "../icon_resources/ionicons/src/svg/alarm-outline.svg"
             )))
@@ -466,7 +496,7 @@ mod tests {
     #[test]
     fn ionicons_sharp_should_work() {
         assert_eq!(
-            ionicons("alarm", Ionicons::Sharp, &IconAttrs::default()),
+            ionicons("alarm", Ionicons::Sharp, IconAttrs::default()),
             Some(expected(include_str!(
                 "../icon_resources/ionicons/src/svg/alarm-sharp.svg"
             )))
@@ -477,7 +507,7 @@ mod tests {
     #[test]
     fn ionicons_should_work() {
         assert_eq!(
-            ionicons("alarm", Ionicons::Normal, &IconAttrs::default()),
+            ionicons("alarm", Ionicons::Normal, IconAttrs::default()),
             Some(expected(include_str!(
                 "../icon_resources/ionicons/src/svg/alarm.svg"
             )))
@@ -488,7 +518,7 @@ mod tests {
     #[test]
     fn octicons_should_work() {
         assert_eq!(
-            octicons("alert", &IconAttrs::default()),
+            octicons("alert", IconAttrs::default()),
             Some(expected(include_str!(
                 "../icon_resources/octicons/icons/alert-24.svg"
             )))
@@ -503,7 +533,20 @@ mod tests {
             .fill("none")
             .stroke_color("currentColor");
 
-        let icon = bootstrap("alarm", false, &attrs).expect("exists");
+        let icon = bootstrap("alarm", false, attrs).expect("exists");
+        assert_eq!(&icon[..32], "<svg class=\"h-8 w-8 text-white\" ");
+    }
+
+    #[cfg(all(feature = "heroicons", feature = "json"))]
+    #[test]
+    fn json_attribute_should_work() {
+        let attrs = &serde_json::json!({
+            "class": "h-8 w-8 text-white",
+            "fill": "none",
+            "stroke_color": "currentColor",
+        });
+
+        let icon = heroicons("academic-cap", true, attrs.into()).expect("exists");
         assert_eq!(&icon[..32], "<svg class=\"h-8 w-8 text-white\" ");
     }
 
