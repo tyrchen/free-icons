@@ -93,6 +93,58 @@ pub fn get(icon_type: IconType, name: &str) -> Option<&'static str> {
     }
 }
 
+#[cfg(feature = "bootstrap")]
+#[inline(always)]
+pub fn bootstrap(name: &str, filled: bool) -> Option<&'static str> {
+    if filled {
+        gen::bootstrap::FILL.get(name).copied()
+    } else {
+        gen::bootstrap::NORMAL.get(name).copied()
+    }
+}
+
+#[cfg(feature = "feather")]
+#[inline(always)]
+pub fn feather(name: &str) -> Option<&'static str> {
+    gen::feather::NORMAL.get(name).copied()
+}
+
+#[cfg(feature = "font-awesome")]
+#[inline(always)]
+pub fn font_awesome(name: &str, category: FontAwesome) -> Option<&'static str> {
+    match category {
+        FontAwesome::Brands => gen::font_awesome::BRANDS.get(name).copied(),
+        FontAwesome::Regular => gen::font_awesome::REGULAR.get(name).copied(),
+        FontAwesome::Solid => gen::font_awesome::SOLID.get(name).copied(),
+    }
+}
+
+#[cfg(feature = "heroicons")]
+#[inline(always)]
+pub fn heroicons(name: &str, outline: bool) -> Option<&'static str> {
+    if outline {
+        gen::heroicons::OUTLINE.get(name).copied()
+    } else {
+        gen::heroicons::SOLID.get(name).copied()
+    }
+}
+
+#[cfg(feature = "ionicons")]
+#[inline(always)]
+pub fn ionicons(name: &str, category: Ionicons) -> Option<&'static str> {
+    match category {
+        Ionicons::Outline => gen::ionicons::OUTLINE.get(name).copied(),
+        Ionicons::Sharp => gen::ionicons::SHARP.get(name).copied(),
+        Ionicons::Normal => gen::ionicons::NORMAL.get(name).copied(),
+    }
+}
+
+#[cfg(feature = "octicons")]
+#[inline(always)]
+pub fn octicons(name: &str) -> Option<&'static str> {
+    gen::octicons::NORMAL.get(name).copied()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -254,6 +306,159 @@ mod tests {
     fn octicons_icon_should_work() {
         assert_eq!(
             get(IconType::Octicons(Octicons::Normal), "alert"),
+            Some(
+                expected(include_str!(
+                    "../icon_resources/octicons/icons/alert-24.svg"
+                ))
+                .as_str()
+            )
+        );
+    }
+
+    #[cfg(feature = "bootstrap")]
+    #[test]
+    fn bootstrap_not_filled_should_work() {
+        assert_eq!(
+            bootstrap("alarm", false),
+            Some(expected(include_str!("../icon_resources/bootstrap/icons/alarm.svg")).as_str())
+        );
+    }
+
+    #[cfg(feature = "bootstrap")]
+    #[test]
+    fn bootstrap_filled_should_work() {
+        assert_eq!(
+            bootstrap("alarm", true),
+            Some(
+                expected(include_str!(
+                    "../icon_resources/bootstrap/icons/alarm-fill.svg"
+                ))
+                .as_str()
+            )
+        );
+    }
+
+    #[cfg(feature = "feather")]
+    #[test]
+    fn feather_should_work() {
+        assert_eq!(
+            feather("activity"),
+            Some(expected(include_str!("../icon_resources/feather/icons/activity.svg")).as_str())
+        );
+    }
+
+    #[cfg(feature = "font-awesome")]
+    #[test]
+    fn font_awesome_brands_should_work() {
+        assert_eq!(
+            font_awesome("500px", FontAwesome::Brands),
+            Some(
+                expected(include_str!(
+                    "../icon_resources/font-awesome/svgs/brands/500px.svg"
+                ))
+                .as_str()
+            )
+        );
+    }
+
+    #[cfg(feature = "font-awesome")]
+    #[test]
+    fn font_awesome_regular_should_work() {
+        assert_eq!(
+            font_awesome("address-book", FontAwesome::Regular),
+            Some(
+                expected(include_str!(
+                    "../icon_resources/font-awesome/svgs/regular/address-book.svg"
+                ))
+                .as_str()
+            )
+        );
+    }
+
+    #[cfg(feature = "font-awesome")]
+    #[test]
+    fn font_awesome_solid_should_work() {
+        assert_eq!(
+            font_awesome("address-book", FontAwesome::Solid),
+            Some(
+                expected(include_str!(
+                    "../icon_resources/font-awesome/svgs/solid/address-book.svg"
+                ))
+                .as_str()
+            )
+        );
+    }
+
+    #[cfg(feature = "heroicons")]
+    #[test]
+    fn heroicons_outline_should_work() {
+        assert_eq!(
+            heroicons("academic-cap", true),
+            Some(
+                expected(include_str!(
+                    "../icon_resources/heroicons/src/24/outline/academic-cap.svg"
+                ))
+                .as_str()
+            )
+        );
+    }
+
+    #[cfg(feature = "heroicons")]
+    #[test]
+    fn heroicons_solid_should_work() {
+        assert_eq!(
+            heroicons("academic-cap", false),
+            Some(
+                expected(include_str!(
+                    "../icon_resources/heroicons/src/24/solid/academic-cap.svg"
+                ))
+                .as_str()
+            )
+        );
+    }
+
+    #[cfg(feature = "ionicons")]
+    #[test]
+    fn ionicons_outline_should_work() {
+        assert_eq!(
+            ionicons("alarm", Ionicons::Outline),
+            Some(
+                expected(include_str!(
+                    "../icon_resources/ionicons/src/svg/alarm-outline.svg"
+                ))
+                .as_str()
+            )
+        );
+    }
+
+    #[cfg(feature = "ionicons")]
+    #[test]
+    fn ionicons_sharp_should_work() {
+        assert_eq!(
+            ionicons("alarm", Ionicons::Sharp),
+            Some(
+                expected(include_str!(
+                    "../icon_resources/ionicons/src/svg/alarm-sharp.svg"
+                ))
+                .as_str()
+            )
+        );
+    }
+
+    #[cfg(feature = "ionicons")]
+    #[test]
+    fn ionicons_should_work() {
+        assert_eq!(
+            ionicons("alarm", Ionicons::Normal),
+            Some(expected(include_str!("../icon_resources/ionicons/src/svg/alarm.svg")).as_str())
+        );
+    }
+
+    #[cfg(feature = "octicons")]
+    #[test]
+    fn octicons_should_work() {
+        assert_eq!(
+            octicons("alert"),
             Some(
                 expected(include_str!(
                     "../icon_resources/octicons/icons/alert-24.svg"

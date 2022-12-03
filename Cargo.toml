@@ -2,7 +2,16 @@
 name = "free-icons"
 version = "0.1.0"
 edition = "2021"
-
+license = "MIT"
+documentation = "https://docs.rs/accept-header"
+repository = "https://github.com/tyrchen/accept-header"
+homepage = "https://github.com/tyrchen/accept-header"
+description = """
+Use free svg icons in your html projects
+"""
+readme = "README.md"
+categories = ["web-programming"]
+keywords = ["icons", "svg"]
 
 [features]
 default = ["bootstrap", "feather", "font-awesome", "heroicons", "ionicons", "octicons"]
