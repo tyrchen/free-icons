@@ -169,7 +169,7 @@ fn get_engine() -> Result<Environment<'static>> {
 }
 
 fn encap(data: &NestedMap) -> Result<Vec<u8>> {
-    let bin = bincode::serialize(data)?;
+    let bin = bincode::encode_to_vec(data, bincode::config::standard())?;
     let buf = Vec::new();
     let mut encoder = GzEncoder::new(buf, flate2::Compression::default());
     encoder.write_all(&bin)?;

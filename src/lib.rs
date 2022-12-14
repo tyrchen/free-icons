@@ -1,9 +1,5 @@
 use flate2::bufread::GzDecoder;
-use std::{
-    borrow::Cow,
-    collections::HashMap,
-    io::{Cursor, Read},
-};
+use std::{borrow::Cow, collections::HashMap, io::Read};
 
 mod gen;
 
@@ -170,8 +166,9 @@ pub(crate) fn decap(bytes: &[u8]) -> HashMap<String, HashMap<String, String>> {
     let mut gz = GzDecoder::new(bytes);
     let mut uncompressed = Vec::new();
     gz.read_to_end(&mut uncompressed).expect("should decap");
-    let reader = Cursor::new(uncompressed);
-    bincode::deserialize_from(reader).expect("should deserialize")
+    let (ret, _) = bincode::decode_from_slice(&uncompressed, bincode::config::standard())
+        .expect("should deserialize");
+    ret
 }
 
 impl<'a> IconAttrs<'a> {
