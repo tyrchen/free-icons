@@ -2,6 +2,7 @@ use anyhow::Result;
 use convert_case::{Case, Casing};
 use flate2::write::GzEncoder;
 use minify_html::{minify, Cfg};
+use minijinja::{Environment, Source};
 use serde_json::json;
 use std::{
     collections::HashMap,
@@ -11,7 +12,6 @@ use std::{
     path::{Path, PathBuf},
     process::Command,
 };
-use tera::{Context, Tera};
 
 type Map = HashMap<String, String>;
 type NestedMap = HashMap<&'static str, Map>;
@@ -28,7 +28,7 @@ fn main() -> Result<()> {
     };
 
     let gen_dir = current_dir()?.join("src/gen");
-    let tera = get_tera()?;
+    let engine = get_engine()?;
 
     let icons = [
         ("bootstrap", "icons"),
@@ -48,9 +48,9 @@ fn main() -> Result<()> {
         for key in data.keys() {
             context[key] = json!(true);
         }
-        let context = Context::from_serialize(context)?;
         let writer = File::create(gen_dir.join(format!("{}.rs", name)))?;
-        tera.render_to("lazy.rs", &context, writer)?;
+        let tpl = engine.get_template("lazy.rs")?;
+        tpl.render_to_write(context, writer)?;
     }
 
     let icons = [
@@ -69,9 +69,9 @@ fn main() -> Result<()> {
         for key in data.keys() {
             context[key] = json!(true);
         }
-        let context = Context::from_serialize(context)?;
         let writer = File::create(gen_dir.join(format!("{}.rs", name)))?;
-        tera.render_to("lazy.rs", &context, writer)?;
+        let tpl = engine.get_template("lazy.rs")?;
+        tpl.render_to_write(context, writer)?;
     }
 
     Command::new("cargo").arg("fmt").output()?;
@@ -158,18 +158,14 @@ fn get_icon_data(path: &Path, cfg: &Cfg) -> Result<NestedMap> {
     Ok(data)
 }
 
-fn get_tera() -> Result<Tera> {
-    let mut tera = Tera::default();
-    tera.add_raw_template("lazy.rs", include_str!("templates/lazy.rs.j2"))?;
-    tera.register_filter(
-        "pascal",
-        |v: &tera::Value, _args: &HashMap<String, tera::Value>| match v.as_str() {
-            Some(s) => Ok(tera::Value::String(s.to_case(Case::Pascal))),
-            None => Err(tera::Error::msg("expected a string")),
-        },
-    );
+fn get_engine() -> Result<Environment<'static>> {
+    let mut env = Environment::default();
+    let mut source = Source::new();
+    source.add_template("lazy.rs", include_str!("templates/lazy.rs.j2"))?;
+    env.add_filter("pascal", |v: String| v.to_case(Case::Pascal));
 
-    Ok(tera)
+    env.set_source(source);
+    Ok(env)
 }
 
 fn encap(data: &NestedMap) -> Result<Vec<u8>> {

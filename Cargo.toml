@@ -1,6 +1,6 @@
 [package]
 name = "free-icons"
-version = "0.4.0"
+version = "0.4.1"
 edition = "2021"
 license = "MIT"
 documentation = "https://docs.rs/accept-header"
@@ -43,8 +43,9 @@ bincode = "1.3.3"
 convert_case = "0.6.0"
 flate2 = "1.0.25"
 minify-html = "0.10.3"
+minijinja = { version = "0.27.0", features = ["speedups", "source"] }
 serde_json = "1.0.89"
-tera = "1.17.1"
+
 
 [dev-dependencies]
 minify-html = "0.10.3"
