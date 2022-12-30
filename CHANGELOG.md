@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Bug Fixes
 
 - Fix github action ([97000e9](97000e95b98d38e2d75310f7ec06ded8f3d54b0f) - 2022-12-03 by Tyr Chen)
+- Fix cargo doc and upgrade doc ([1661e27](1661e2700f2d861bd6d27e7571be7702bfa83a44) - 2022-12-30 by Tyr Chen)
 
 ### Features
 
