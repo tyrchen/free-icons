@@ -1,11 +1,11 @@
 [package]
 name = "free-icons"
-version = "0.5.0"
+version = "0.5.1"
 edition = "2021"
 license = "MIT"
-documentation = "https://docs.rs/accept-header"
-repository = "https://github.com/tyrchen/accept-header"
-homepage = "https://github.com/tyrchen/accept-header"
+documentation = "https://docs.rs/free-icons"
+repository = "https://github.com/tyrchen/free-icons"
+homepage = "https://github.com/tyrchen/free-icons"
 description = """
 Use free svg icons in your html projects
 """
@@ -32,19 +32,19 @@ octicons = []
 json = ["serde_json"]
 
 [dependencies]
-bincode = { version = "2.0.0-rc.2" }
+bincode = "2.0.0-rc.2"
 flate2 = "1.0.25"
 lazy_static = "1.4.0"
-serde_json = { version = "1.0.89", optional = true }
+serde_json = { version = "1.0.91", optional = true }
 
 [build-dependencies]
-anyhow = "1.0.66"
-bincode = { version = "2.0.0-rc.2" }
+anyhow = "1.0.68"
+bincode = "2.0.0-rc.2"
 convert_case = "0.6.0"
 flate2 = "1.0.25"
 minify-html = "0.10.3"
 minijinja = { version = "0.27.0", features = ["speedups", "source"] }
-serde_json = "1.0.89"
+serde_json = "1.0.91"
 
 
 [dev-dependencies]
