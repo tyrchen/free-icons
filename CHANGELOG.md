@@ -25,6 +25,10 @@ All notable changes to this project will be documented in this file.
 - Improve attrs data structure and fix heroicons (use optimized rather than src) ([d9e9036](d9e9036a567cf8389cd5d8e9d61dd1fff403785e) - 2022-12-03 by Tyr Chen)
 - Upgrade bincode to 2 ([02a9594](02a95943675187f4f1682e4e66fd935b37d9c686) - 2022-12-14 by Tyr Chen)
 
+### Miscellaneous Tasks
+
+- Bump minijinja to 0.30.0 ([236511b](236511b7883e64eac4ea6ebd9021a41d52446195) - 2023-01-20 by Tyr Chen)
+
 ### Refactor
 
 - Use minijinjia to replace tera ([bc12102](bc1210286c496050b928db0fe0bca23bfae1738b) - 2022-12-14 by Tyr Chen)
