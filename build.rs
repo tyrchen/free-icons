@@ -42,19 +42,19 @@ fn main() -> Result<()> {
 
         let name = name.to_case(Case::Snake);
         let bin = encap(&data)?;
-        fs::write(gen_dir.join(format!("{}.bin", name)), bin)?;
+        fs::write(gen_dir.join(format!("{name}.bin")), bin)?;
 
         let mut context = json!({ "name": name });
         for key in data.keys() {
             context[key] = json!(true);
         }
-        let writer = File::create(gen_dir.join(format!("{}.rs", name)))?;
+        let writer = File::create(gen_dir.join(format!("{name}.rs")))?;
         let tpl = engine.get_template("lazy.rs")?;
         tpl.render_to_write(context, writer)?;
     }
 
     let icons = [
-        ("font-awesome", "svgs", vec!["brands", "regular", "solid"]),
+        ("font-awesome", "svgs", vec!["regular", "solid"]),
         ("heroicons", "optimized/24", vec!["outline", "solid"]),
     ];
 
@@ -63,13 +63,13 @@ fn main() -> Result<()> {
         let bin = encap(&data)?;
 
         let name = name.to_case(Case::Snake);
-        fs::write(gen_dir.join(format!("{}.bin", name)), bin)?;
+        fs::write(gen_dir.join(format!("{name}.bin")), bin)?;
 
         let mut context = json!({ "name": name });
         for key in data.keys() {
             context[key] = json!(true);
         }
-        let writer = File::create(gen_dir.join(format!("{}.rs", name)))?;
+        let writer = File::create(gen_dir.join(format!("{name}.rs")))?;
         let tpl = engine.get_template("lazy.rs")?;
         tpl.render_to_write(context, writer)?;
     }
@@ -102,6 +102,16 @@ fn get_icon_data_by_category(
             let name = path.file_stem().unwrap().to_str().unwrap();
             let content = fs::read(&path)?;
             map.insert(name.to_owned(), String::from_utf8(minify(&content, cfg))?);
+        }
+
+        if path.ends_with("font-awesome/svgs") {
+            for entry in fs::read_dir(path.join("brands"))? {
+                let entry = entry?;
+                let path = entry.path();
+                let name = path.file_stem().unwrap().to_str().unwrap();
+                let content = fs::read(&path)?;
+                map.insert(name.to_owned(), String::from_utf8(minify(&content, cfg))?);
+            }
         }
 
         data.insert(category, map);

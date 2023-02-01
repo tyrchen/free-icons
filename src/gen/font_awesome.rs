@@ -9,7 +9,6 @@ lazy_static! {
         decap(data)
     };
     pub static ref SOLID: &'static HashMap<String, String> = DATA.get("solid").expect("solid");
-    pub static ref BRANDS: &'static HashMap<String, String> = DATA.get("brands").expect("brands");
     pub static ref REGULAR: &'static HashMap<String, String> =
         DATA.get("regular").expect("regular");
 }

@@ -45,15 +45,6 @@ pub static SOLID: phf::Map<&'static String, &'static String> = phf_map! {
 };
 {%- endif -%}
 
-{% if brands %}
-
-pub static BRANDS: phf::Map<&'static String, &'static String> = phf_map! {
-    {%- for name, content in brands %}
-    "{{ name }}" => r###"{{ content }}"###,
-    {%- endfor %}
-};
-{%- endif -%}
-
 {% if regular %}
 
 pub static REGULAR: phf::Map<&'static String, &'static String> = phf_map! {

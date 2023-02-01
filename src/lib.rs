@@ -42,7 +42,6 @@ pub enum Feather {
 #[cfg(feature = "font-awesome")]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum FontAwesome {
-    Brands,
     Regular,
     Solid,
 }
@@ -82,7 +81,6 @@ pub fn get(icon_type: IconType, name: &str) -> Option<&'static String> {
         },
         #[cfg(feature = "font-awesome")]
         IconType::FontAwesome(icon_type) => match icon_type {
-            FontAwesome::Brands => gen::font_awesome::BRANDS.get(name),
             FontAwesome::Regular => gen::font_awesome::REGULAR.get(name),
             FontAwesome::Solid => gen::font_awesome::SOLID.get(name),
         },
@@ -126,7 +124,6 @@ pub fn feather(name: &str, attrs: IconAttrs) -> Option<String> {
 #[inline(always)]
 pub fn font_awesome(name: &str, category: FontAwesome, attrs: IconAttrs) -> Option<String> {
     let svg = match category {
-        FontAwesome::Brands => gen::font_awesome::BRANDS.get(name),
         FontAwesome::Regular => gen::font_awesome::REGULAR.get(name),
         FontAwesome::Solid => gen::font_awesome::SOLID.get(name),
     };
@@ -207,7 +204,7 @@ impl<'a> IconAttrs<'a> {
             let mut attrs = String::new();
             for i in 0..self.pos {
                 let (k, v) = &self.data[i as usize];
-                attrs.push_str(&format!(" {}=\"{}\"", k, v));
+                attrs.push_str(&format!(" {k}=\"{v}\""));
             }
 
             if !attrs.is_empty() {
@@ -295,7 +292,7 @@ mod tests {
     #[test]
     fn font_awesome_icon_brands_should_work() {
         assert_eq!(
-            get(IconType::FontAwesome(FontAwesome::Brands), "500px"),
+            get(IconType::FontAwesome(FontAwesome::Regular), "500px"),
             Some(&expected(include_str!(
                 "../icon_resources/font-awesome/svgs/brands/500px.svg"
             )))
@@ -427,7 +424,7 @@ mod tests {
     #[test]
     fn font_awesome_brands_should_work() {
         assert_eq!(
-            font_awesome("500px", FontAwesome::Brands, IconAttrs::default()),
+            font_awesome("500px", FontAwesome::Solid, IconAttrs::default()),
             Some(expected(include_str!(
                 "../icon_resources/font-awesome/svgs/brands/500px.svg"
             )))
