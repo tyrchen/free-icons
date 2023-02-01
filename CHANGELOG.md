@@ -24,6 +24,7 @@ All notable changes to this project will be documented in this file.
 - Extend the interface so that it can add extra attributes ([a3155c9](a3155c9d2c6696772497dda081721796e7adb69c) - 2022-12-03 by Tyr Chen)
 - Improve attrs data structure and fix heroicons (use optimized rather than src) ([d9e9036](d9e9036a567cf8389cd5d8e9d61dd1fff403785e) - 2022-12-03 by Tyr Chen)
 - Upgrade bincode to 2 ([02a9594](02a95943675187f4f1682e4e66fd935b37d9c686) - 2022-12-14 by Tyr Chen)
+- Merge the brand icons back to regular/solid categories for font-awesome ([f473c8a](f473c8a500de8650bcd917e9636788a70cbd861e) - 2023-02-01 by Tyr Chen)
 
 ### Miscellaneous Tasks
 
