@@ -29,6 +29,7 @@ All notable changes to this project will be documented in this file.
 ### Miscellaneous Tasks
 
 - Bump minijinja to 0.30.0 ([236511b](236511b7883e64eac4ea6ebd9021a41d52446195) - 2023-01-20 by Tyr Chen)
+- Bump deps ([cbb99e2](cbb99e2b10f36ae91ddb5ee2caa397c84b011b16) - 2023-02-14 by Tyr Chen)
 
 ### Refactor
 
