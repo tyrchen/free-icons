@@ -1,6 +1,6 @@
 [package]
 name = "free-icons"
-version = "0.5.5"
+version = "0.6.0"
 edition = "2021"
 license = "MIT"
 documentation = "https://docs.rs/free-icons"
@@ -12,17 +12,18 @@ Use free svg icons in your html projects
 readme = "README.md"
 categories = ["web-programming"]
 keywords = ["icons", "svg"]
-include = [
-    "Cargo.toml",
-    "build.rs",
-    "src/lib.rs",
-    "src/gen/*",
-    "templates/*",
-]
+include = ["Cargo.toml", "build.rs", "src/lib.rs", "src/gen/*", "templates/*"]
 
 
 [features]
-default = ["bootstrap", "feather", "font-awesome", "heroicons", "ionicons", "octicons"]
+default = [
+  "bootstrap",
+  "feather",
+  "font-awesome",
+  "heroicons",
+  "ionicons",
+  "octicons",
+]
 bootstrap = []
 feather = []
 font-awesome = []
@@ -42,10 +43,10 @@ anyhow = "1.0.69"
 bincode = "2.0.0-rc.2"
 convert_case = "0.6.0"
 flate2 = "1.0.25"
-minify-html = "0.10.8"
-minijinja = { version = "0.30.4", features = ["speedups", "source"] }
+minify-html = "0.11"
+minijinja = { version = "1", features = ["loader", "speedups"] }
 serde_json = "1.0.93"
 
 
 [dev-dependencies]
-minify-html = "0.10.8"
+minify-html = "0.11"

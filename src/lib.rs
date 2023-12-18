@@ -253,6 +253,9 @@ mod tests {
         minify_js: false,
         remove_bangs: false,
         remove_processing_instructions: false,
+        minify_css_level_1: false,
+        minify_css_level_2: false,
+        minify_css_level_3: false,
     };
 
     #[cfg(feature = "bootstrap")]

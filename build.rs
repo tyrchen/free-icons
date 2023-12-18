@@ -2,7 +2,7 @@ use anyhow::Result;
 use convert_case::{Case, Casing};
 use flate2::write::GzEncoder;
 use minify_html::{minify, Cfg};
-use minijinja::{Environment, Source};
+use minijinja::Environment;
 use serde_json::json;
 use std::{
     collections::HashMap,
@@ -170,11 +170,9 @@ fn get_icon_data(path: &Path, cfg: &Cfg) -> Result<NestedMap> {
 
 fn get_engine() -> Result<Environment<'static>> {
     let mut env = Environment::default();
-    let mut source = Source::new();
-    source.add_template("lazy.rs", include_str!("templates/lazy.rs.j2"))?;
+    env.add_template("lazy.rs", include_str!("templates/lazy.rs.j2"))?;
     env.add_filter("pascal", |v: String| v.to_case(Case::Pascal));
 
-    env.set_source(source);
     Ok(env)
 }
 
