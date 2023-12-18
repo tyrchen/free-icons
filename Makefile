@@ -11,4 +11,7 @@ release:
 	@git push origin master
 	@cargo release push --execute
 
-.PHONY: build test release
+update-submodule:
+	@git submodule update --init --recursive --remote
+
+.PHONY: build test release update-submodule
