@@ -504,9 +504,9 @@ mod tests {
     #[test]
     fn ionicons_should_work() {
         assert_eq!(
-            ionicons("alarm", Ionicons::Normal, IconAttrs::default()),
+            ionicons("logo-github", Ionicons::Normal, IconAttrs::default()),
             Some(expected(include_str!(
-                "../icon_resources/ionicons/src/svg/alarm.svg"
+                "../icon_resources/ionicons/src/svg/logo-github.svg"
             )))
         );
     }
