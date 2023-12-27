@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 ---
+## [0.7.0](https://github.com/tyrchen/free-icons/compare/v0.6.0..v0.7.0) - 2023-12-27
+
+### Features
+
+- use latest html_minify - ([a077203](https://github.com/tyrchen/free-icons/commit/a0772036e5d1cfe3a7e1d7d9c5a6bc4f79975026)) - Tyr Chen
+
+### Miscellaneous Chores
+
+- updte dependencies - ([73b6cfa](https://github.com/tyrchen/free-icons/commit/73b6cfac36362597961afbda2ce6b9207facf228)) - Tyr Chen
+
+### Other
+
+- Update CHANGELOG.md - ([9562046](https://github.com/tyrchen/free-icons/commit/956204601e9976b620e42b7c24a0cdf78a9582c7)) - Tyr Chen
+
+---
 ## [0.6.0](https://github.com/tyrchen/free-icons/compare/v0.5.5..v0.6.0) - 2023-12-18
 
 ### Features
