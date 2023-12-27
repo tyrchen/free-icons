@@ -1,6 +1,6 @@
 [package]
 name = "free-icons"
-version = "0.6.1"
+version = "0.7.0"
 edition = "2021"
 license = "MIT"
 documentation = "https://docs.rs/free-icons"
@@ -33,20 +33,20 @@ octicons = []
 json = ["serde_json"]
 
 [dependencies]
-bincode = "2.0.0-rc.2"
-flate2 = "1.0.25"
+bincode = "2.0.0-rc.3"
+flate2 = "1.0.28"
 lazy_static = "1.4.0"
-serde_json = { version = "1.0.93", optional = true }
+serde_json = { version = "1.0.108", optional = true }
 
 [build-dependencies]
-anyhow = "1.0.69"
-bincode = "2.0.0-rc.2"
+anyhow = "1.0.76"
+bincode = "2.0.0-rc"
 convert_case = "0.6.0"
-flate2 = "1.0.25"
-minify-html = "0.11"
-minijinja = { version = "1", features = ["loader", "speedups"] }
-serde_json = "1.0.93"
+flate2 = "1.0.28"
+minify-html = "0.15.0"
+minijinja = { version = "1.0.10", features = ["loader", "speedups"] }
+serde_json = "1.0.108"
 
 
 [dev-dependencies]
-minify-html = "0.11"
+minify-html = "0.15.0"

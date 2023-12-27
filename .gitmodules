@@ -1,18 +1,24 @@
 [submodule "icon_resources/font-awesome"]
 	path = icon_resources/font-awesome
 	url = git@github.com:FortAwesome/Font-Awesome.git
+  ignore = dirty
 [submodule "icon_resources/heroicons"]
 	path = icon_resources/heroicons
 	url = git@github.com:tailwindlabs/heroicons.git
+  ignore = dirty
 [submodule "icon_resources/ionicons"]
 	path = icon_resources/ionicons
 	url = git@github.com:ionic-team/ionicons.git
+  ignore = dirty
 [submodule "icon_resources/octicons"]
 	path = icon_resources/octicons
 	url = git@github.com:primer/octicons.git
+  ignore = dirty
 [submodule "icon_resources/bootstrap"]
 	path = icon_resources/bootstrap
 	url = git@github.com:twbs/icons.git
+  ignore = dirty
 [submodule "icon_resources/feather"]
 	path = icon_resources/feather
 	url = git@github.com:feathericons/feather.git
+  ignore = dirty

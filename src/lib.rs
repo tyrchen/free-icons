@@ -245,17 +245,18 @@ mod tests {
     const CFG: Cfg = Cfg {
         keep_closing_tags: true,
         do_not_minify_doctype: false,
-        ensure_spec_compliant_unquoted_attribute_values: false,
-        keep_html_and_head_opening_tags: false,
+        ensure_spec_compliant_unquoted_attribute_values: true,
+        keep_html_and_head_opening_tags: true,
         keep_spaces_between_attributes: true,
         keep_comments: false,
-        minify_css: false,
-        minify_js: false,
+        minify_css: true,
+        minify_js: true,
         remove_bangs: false,
         remove_processing_instructions: false,
-        minify_css_level_1: false,
-        minify_css_level_2: false,
-        minify_css_level_3: false,
+        keep_input_type_text_attr: true,
+        keep_ssi_comments: false,
+        preserve_brace_template_syntax: true,
+        preserve_chevron_percent_template_syntax: false,
     };
 
     #[cfg(feature = "bootstrap")]
@@ -427,9 +428,9 @@ mod tests {
     #[test]
     fn font_awesome_brands_should_work() {
         assert_eq!(
-            font_awesome("500px", FontAwesome::Solid, IconAttrs::default()),
+            font_awesome("github", FontAwesome::Solid, IconAttrs::default()),
             Some(expected(include_str!(
-                "../icon_resources/font-awesome/svgs/brands/500px.svg"
+                "../icon_resources/font-awesome/svgs/brands/github.svg"
             )))
         );
     }

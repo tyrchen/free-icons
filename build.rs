@@ -24,6 +24,12 @@ fn main() -> Result<()> {
     let cfg = Cfg {
         keep_closing_tags: true,
         keep_spaces_between_attributes: true,
+        ensure_spec_compliant_unquoted_attribute_values: true,
+        keep_html_and_head_opening_tags: true,
+        minify_css: true,
+        minify_js: true,
+        keep_input_type_text_attr: true,
+        preserve_brace_template_syntax: true,
         ..Default::default()
     };
 
